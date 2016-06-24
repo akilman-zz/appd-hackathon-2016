@@ -2,7 +2,6 @@ Gerrit.install(function(self) {
   function getCurrentUser(url) {
     var karmaUserEmail = getKarmaUserEmail('karma_user_email');
 
-
     /*self.get('/plugins/karma?account_id=' + currentAccountId, function(result) {
       console.log('rest call result is:', result);
     });

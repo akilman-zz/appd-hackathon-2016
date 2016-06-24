@@ -42,7 +42,7 @@ class IndexScreen extends VerticalPanel {
 
     @Override
     public void onLoad(Screen screen) {
-      screen.setPageTitle("aw snap");
+      screen.setPageTitle("Get your karma score");
       screen.show(new IndexScreen());
     }
   }
@@ -56,7 +56,7 @@ class IndexScreen extends VerticalPanel {
 
     setStyleName("cookbook-panel");
     String userEmailTxt = "Enter account name";
-    userEmailTextArea.setText(userEmailTxt);
+    userEmailTextArea.getElement().setPropertyString("placeholder", userEmailTxt);
     Panel panel = new VerticalPanel();
     panel.add(userEmailTextArea);
     add(panel);
