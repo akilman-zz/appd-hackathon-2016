@@ -31,6 +31,10 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.Cookies;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.json.client.JSONValue;
 
 class IndexScreen extends VerticalPanel {
 
@@ -51,7 +55,7 @@ class IndexScreen extends VerticalPanel {
   IndexScreen() {
 
     setStyleName("cookbook-panel");
-    String userEmailTxt = "Enter account email";
+    String userEmailTxt = "Enter account name";
     userEmailTextArea.setText(userEmailTxt);
     Panel panel = new VerticalPanel();
     panel.add(userEmailTextArea);
@@ -71,8 +75,8 @@ class IndexScreen extends VerticalPanel {
 
   private void sayHello() {
     String projectName = "demo-project";
-    String userEmail = userEmailTextArea.getText();
-    Cookies.setCookie("karma_user_email", userEmail);
+    final String userEmail = userEmailTextArea.getText();
+
     RestApi projectRestCall = new RestApi("accounts").id(userEmail).view("cookbook", "karma");
 
     restReply = "path: " + projectRestCall.path();
@@ -86,11 +90,14 @@ class IndexScreen extends VerticalPanel {
 
       @Override
       public void onSuccess(JavaScriptObject javaScriptObject) {
-        restReply = restReply + ", success: " + new JSONObject(javaScriptObject).toString();
-        //textArea.setText(restReply);
+        restReply = new JSONObject(javaScriptObject).get("value").toString();
+        //String value = restReply.get("value").toString();
+        Element karmaDetailsElem = DOM.getElementById("karma-details");
+        karmaDetailsElem.setInnerHTML("Your Karma Score is:" + restReply);
+        Cookies.setCookie("karma_user_email", userEmail);
+        Cookies.setCookie("karma_score", restReply);
       }
     });
-    Window.alert("making rest call...");
   }
 
 }
