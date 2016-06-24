@@ -36,6 +36,23 @@ public class Changes {
         return change.insertions + change.deletions;
     }
 
+    public int averageNumberOfLinesForUser(String userName) throws RestApiException {
+        List<ChangeInfo> userChanges = getAllChangesForUser(userName);
+        return averageNumberOfLines(userChanges);
+    }
+
+    public int averageNumberOfLines(List<ChangeInfo> changes) {
+
+        int nTotalLines = 0;
+        int nChanges = changes.size();
+
+        for (ChangeInfo change : changes) {
+            nTotalLines += totalLinesChanged(change);
+        }
+
+        return nTotalLines / nChanges;
+    }
+
     public int averageNumberOfRevisions(List<ChangeInfo> changes) throws RestApiException {
 
         int nChanges = changes.size();
