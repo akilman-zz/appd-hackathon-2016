@@ -50,6 +50,10 @@ public class Changes {
             nTotalLines += totalLinesChanged(change);
         }
 
+        if (nChanges == 0) {
+            return 0;
+        }
+
         return nTotalLines / nChanges;
     }
 
