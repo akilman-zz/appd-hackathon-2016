@@ -18,15 +18,19 @@ import com.google.gerrit.plugin.client.rpc.RestApi;
 import com.google.gerrit.plugin.client.screen.Screen;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.Cookies;
 
 class IndexScreen extends VerticalPanel {
 
@@ -42,20 +46,18 @@ class IndexScreen extends VerticalPanel {
   private String restReply;
 
 
-  TextArea textArea = new TextArea();
+  TextArea userEmailTextArea = new TextArea();
 
   IndexScreen() {
 
     setStyleName("cookbook-panel");
-
-    String someText = "some text...";
-    textArea.setText(someText);
-
+    String userEmailTxt = "Enter account email";
+    userEmailTextArea.setText(userEmailTxt);
     Panel panel = new VerticalPanel();
-    panel.add(textArea);
+    panel.add(userEmailTextArea);
     add(panel);
 
-    Button helloButton = new Button("Say Hello To My Little Friend...");
+    Button helloButton = new Button("Get Gerrit Karma");
     helloButton.addStyleName("cookbook-helloButton");
     helloButton.addClickHandler(new ClickHandler() {
       @Override
@@ -68,9 +70,10 @@ class IndexScreen extends VerticalPanel {
   }
 
   private void sayHello() {
-
     String projectName = "demo-project";
-    RestApi projectRestCall = new RestApi("projects").id(projectName).view("cookbook", "karma");
+    String userEmail = userEmailTextArea.getText();
+    Cookies.setCookie("karma_user_email", userEmail);
+    RestApi projectRestCall = new RestApi("accounts").id(userEmail).view("cookbook", "karma");
 
     restReply = "path: " + projectRestCall.path();
 
@@ -78,13 +81,13 @@ class IndexScreen extends VerticalPanel {
       @Override
       public void onFailure(Throwable throwable) {
         restReply = restReply + ", error: " + throwable.getMessage();
-        textArea.setText(restReply);
+        //textArea.setText(restReply);
       }
 
       @Override
       public void onSuccess(JavaScriptObject javaScriptObject) {
         restReply = restReply + ", success: " + new JSONObject(javaScriptObject).toString();
-        textArea.setText(restReply);
+        //textArea.setText(restReply);
       }
     });
     Window.alert("making rest call...");

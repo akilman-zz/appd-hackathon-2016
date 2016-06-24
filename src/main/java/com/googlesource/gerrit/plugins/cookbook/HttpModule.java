@@ -27,6 +27,8 @@ public class HttpModule extends HttpPluginModule {
     DynamicSet.bind(binder(), WebUiPlugin.class)
         .toInstance(new JavaScriptPlugin("greetings.js"));
     DynamicSet.bind(binder(), WebUiPlugin.class)
+            .toInstance(new JavaScriptPlugin("gerritKarma.js"));
+    DynamicSet.bind(binder(), WebUiPlugin.class)
         .toInstance(new JavaScriptPlugin("hello-change.js"));
     DynamicSet.bind(binder(), WebUiPlugin.class)
         .toInstance(new JavaScriptPlugin("hello-project.js"));
