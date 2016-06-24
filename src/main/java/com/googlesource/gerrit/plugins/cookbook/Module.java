@@ -19,6 +19,7 @@ import static com.google.gerrit.server.project.ProjectResource.PROJECT_KIND;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gerrit.extensions.annotations.Exports;
+import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.common.InheritableBoolean;
 import com.google.gerrit.extensions.events.UsageDataPublishedListener;
 import com.google.gerrit.extensions.registration.DynamicSet;
@@ -29,11 +30,13 @@ import com.google.gerrit.extensions.webui.TopMenu;
 import com.google.gerrit.server.config.ProjectConfigEntry;
 import com.google.gerrit.server.git.validators.UploadValidationListener;
 import com.google.gerrit.server.plugins.ServerPluginProvider;
-import com.google.inject.AbstractModule;
 
 import com.googlesource.gerrit.plugins.cookbook.pluginprovider.HelloSshPluginProvider;
 
-public class Module extends AbstractModule {
+/**
+ * Extends the server module to provide access to the {@link GerritApi} singletone
+ */
+public class Module extends com.google.gerrit.server.api.Module {
 
   @Override
   protected void configure() {
@@ -51,6 +54,8 @@ public class Module extends AbstractModule {
         post(REVISION_KIND, "hello-revision").to(HelloRevisionAction.class);
         post(PROJECT_KIND, "hello-project").to(HelloProjectAction.class);
         get(REVISION_KIND, "greetings").to(Greetings.class);
+        get(PROJECT_KIND, "karma").to(GetKarma.class);
+
       }
     });
     DynamicSet.bind(binder(), UploadValidationListener.class)

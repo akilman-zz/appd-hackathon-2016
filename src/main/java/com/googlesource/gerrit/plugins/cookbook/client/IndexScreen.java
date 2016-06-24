@@ -14,82 +14,48 @@
 
 package com.googlesource.gerrit.plugins.cookbook.client;
 
+import com.google.gerrit.plugin.client.rpc.RestApi;
 import com.google.gerrit.plugin.client.screen.Screen;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.user.client.Event;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 class IndexScreen extends VerticalPanel {
+
   static class Factory implements Screen.EntryPoint {
+
     @Override
     public void onLoad(Screen screen) {
-      screen.setPageTitle("cookbook index");
+      screen.setPageTitle("aw snap");
       screen.show(new IndexScreen());
     }
   }
 
-  private TextBox usernameTxt;
-  private TextArea greetingTxt;
+  private String restReply;
+
+
+  TextArea textArea = new TextArea();
 
   IndexScreen() {
+
     setStyleName("cookbook-panel");
 
-    Panel usernamePanel = new VerticalPanel();
-    usernamePanel.add(new Label("Username:"));
-    usernameTxt = new TextBox() {
-      @Override
-      public void onBrowserEvent(Event event) {
-        super.onBrowserEvent(event);
-        if (event.getTypeInt() == Event.ONPASTE) {
-          Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-            @Override
-            public void execute() {
-              if (getValue().trim().length() != 0) {
-                setEnabled(true);
-              }
-            }
-          });
-        }
-      }
-    };
-    usernameTxt.addKeyPressHandler(new KeyPressHandler() {
-      @Override
-      public void onKeyPress(final KeyPressEvent event) {
-        event.stopPropagation();
-      }
-    });
-    usernameTxt.sinkEvents(Event.ONPASTE);
-    usernameTxt.setVisibleLength(40);
-    usernamePanel.add(usernameTxt);
-    add(usernamePanel);
+    String someText = "some text...";
+    textArea.setText(someText);
 
-    Panel messagePanel = new VerticalPanel();
-    messagePanel.add(new Label("Message:"));
-    greetingTxt = new TextArea();
-    greetingTxt.addKeyPressHandler(new KeyPressHandler() {
-      @Override
-      public void onKeyPress(final KeyPressEvent event) {
-        event.stopPropagation();
-      }
-    });
-    greetingTxt.setVisibleLines(12);
-    greetingTxt.setCharacterWidth(80);
-    greetingTxt.getElement().setPropertyBoolean("spellcheck", false);
-    messagePanel.add(greetingTxt);
-    add(messagePanel);
+    Panel panel = new VerticalPanel();
+    panel.add(textArea);
+    add(panel);
 
-    Button helloButton = new Button("Say Hello");
+    Button helloButton = new Button("Say Hello To My Little Friend...");
     helloButton.addStyleName("cookbook-helloButton");
     helloButton.addClickHandler(new ClickHandler() {
       @Override
@@ -102,23 +68,26 @@ class IndexScreen extends VerticalPanel {
   }
 
   private void sayHello() {
-    String username = usernameTxt.getValue();
-    String greeting = greetingTxt.getText();
-    if (username == null) {
-      username = "";
-    } else {
-      username = username.trim();
-    }
-    if (greeting == null) {
-      greeting = "";
-    } else {
-      greeting = greeting.trim();
-    }
-    StringBuilder sb = new StringBuilder();
-    sb.append("Hey ");
-    sb.append(username.isEmpty() ? "Dude" : username);
-    sb.append(", ");
-    sb.append(greeting.isEmpty() ? "what's up?" : greeting);
-    Window.alert(sb.toString());
+
+    String projectName = "demo-project";
+    RestApi projectRestCall = new RestApi("projects").id(projectName).view("cookbook", "karma");
+
+    restReply = "path: " + projectRestCall.path();
+
+    projectRestCall.get(new AsyncCallback<JavaScriptObject>() {
+      @Override
+      public void onFailure(Throwable throwable) {
+        restReply = restReply + ", error: " + throwable.getMessage();
+        textArea.setText(restReply);
+      }
+
+      @Override
+      public void onSuccess(JavaScriptObject javaScriptObject) {
+        restReply = restReply + ", success: " + new JSONObject(javaScriptObject).toString();
+        textArea.setText(restReply);
+      }
+    });
+    Window.alert("making rest call...");
   }
+
 }
