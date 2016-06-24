@@ -36,6 +36,13 @@ public class Changes {
         return change.insertions + change.deletions;
     }
 
+    public int scoreBasedOnAverageNumberOfLinesForUser(String userName) throws RestApiException {
+        int averageLinesForUser = averageNumberOfLinesForUser(userName);
+        int worstPossibleScore = 1200000;
+        int score = (int) Math.floor(100 * averageLinesForUser / worstPossibleScore) + 1;
+        return 100 - score;
+    }
+
     public int averageNumberOfLinesForUser(String userName) throws RestApiException {
         List<ChangeInfo> userChanges = getAllChangesForUser(userName);
         return averageNumberOfLines(userChanges);
