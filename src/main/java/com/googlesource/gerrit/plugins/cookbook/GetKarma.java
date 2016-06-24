@@ -29,8 +29,10 @@ public class GetKarma implements RestReadView<ProjectResource> {
 
     @Override
     public KarmaInfo apply(ProjectResource resource) throws Exception {
-        List<ChangeInfo> akilman = changes.getAllChangesForUser("akilman");
-        String message = "average number of revisions for akilman: " + changes.averageNumberOfRevisions(akilman);
-        return new KarmaInfo(37, message);
+        String userName = "akilman";
+        List<ChangeInfo> akilman = changes.getAllChangesForUser(userName);
+        String description = "average number of revisions for " + userName;
+        int value = changes.averageNumberOfRevisions(akilman);
+        return new KarmaInfo(description, value);
     }
 }

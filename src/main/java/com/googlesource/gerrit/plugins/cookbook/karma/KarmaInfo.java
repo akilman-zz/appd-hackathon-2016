@@ -2,19 +2,12 @@ package com.googlesource.gerrit.plugins.cookbook.karma;
 
 public class KarmaInfo {
 
-    public int value = 42;
-    public String message;
+    public final String description;
+    public final int value;
 
-    public KarmaInfo() {
-        this.value = 42;
-    }
-
-    public KarmaInfo(int value) {
+    public KarmaInfo(String description, int value) {
+        this.description = description;
         this.value = value;
     }
 
-    public KarmaInfo(int value, String message) {
-        this.value = value;
-        this.message = message;
-    }
 }
